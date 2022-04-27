@@ -10,9 +10,9 @@ Sometimes numbers are missing from where they should definitely be. You also not
 
 Here are the documents that you have: documentation and diagram of the bus lines.
 
-![alt text](https://github.com/aasmc/EasyRiderBusCompany/master/resources/Diagram_of_the_bus_line.jpg?raw=true)
+![alt text](https://github.com/aasmc/EasyRiderBusCompany/blob/master/resources/Diagram_of_the_bus_line.jpg?raw=true)
 
-![alt text](https://github.com/aasmc/EasyRiderBusCompany/master/resources/Documentation.jpg?raw=true)
+![alt text](https://github.com/aasmc/EasyRiderBusCompany/blob/master/resources/Documentation.jpg?raw=true)
 
 ### Objectives
 
