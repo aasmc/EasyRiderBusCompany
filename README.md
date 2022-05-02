@@ -523,3 +523,146 @@ Start stops: 3 ['Bourbon Street', 'Pilotow Street', 'Prospekt Avenue']
 Transfer stops: 3 ['Elm Street', 'Sesame Street', 'Sunset Boulevard']
 Finish stops: 2 ['Sesame Street', 'Sunset Boulevard']
 ```
+
+## Stage 5
+### Description
+
+It is now time to move on to a more detailed analysis. First, check that arrival times for the upcoming stops make sense: they are supposed to be increasing, that is, going forward in time. After all, there is no information in the documentation that your company offers time travel.
+Objectives
+
+- The string containing the data in JSON format is passed to standard input.
+- Check that the arrival time for the upcoming stops for a given bus line is increasing.
+- If the arrival time for the next stop is earlier than or equal to the time of the current stop, stop checking that bus line and remember the name of the incorrect stop.
+- Display the information for those bus lines that have time anomalies. For the correct stops, do not display anything.
+- If all the lines are correct timewise, print OK.
+- The output should have the same formatting as shown in the example.
+
+If you can't find the necessary information in the stage description, it can probably be found in the attached documentation.
+
+### Examples
+
+Example 1
+
+Input 1:
+
+```json
+[
+    {
+        "bus_id": 128,
+        "stop_id": 1,
+        "stop_name": "Prospekt Avenue",
+        "next_stop": 3,
+        "stop_type": "S",
+        "a_time": "08:12"
+    },
+    {
+        "bus_id": 128,
+        "stop_id": 3,
+        "stop_name": "Elm Street",
+        "next_stop": 5,
+        "stop_type": "",
+        "a_time": "08:19"
+    },
+    {
+        "bus_id": 128,
+        "stop_id": 5,
+        "stop_name": "Fifth Avenue",
+        "next_stop": 7,
+        "stop_type": "O",
+        "a_time": "08:17"
+    },
+    {
+        "bus_id": 128,
+        "stop_id": 7,
+        "stop_name": "Sesame Street",
+        "next_stop": 0,
+        "stop_type": "F",
+        "a_time": "08:07"
+    },
+    {
+        "bus_id": 256,
+        "stop_id": 2,
+        "stop_name": "Pilotow Street",
+        "next_stop": 3,
+        "stop_type": "S",
+        "a_time": "09:20"
+    },
+    {
+        "bus_id": 256,
+        "stop_id": 3,
+        "stop_name": "Elm Street",
+        "next_stop": 6,
+        "stop_type": "",
+        "a_time": "09:45"
+    },
+    {
+        "bus_id": 256,
+        "stop_id": 6,
+        "stop_name": "Sunset Boulevard",
+        "next_stop": 7,
+        "stop_type": "",
+        "a_time": "09:44"
+    },
+    {
+        "bus_id": 256,
+        "stop_id": 7,
+        "stop_name": "Sesame Street",
+        "next_stop": 0,
+        "stop_type": "F",
+        "a_time": "10:12"
+    },
+    {
+        "bus_id": 512,
+        "stop_id": 4,
+        "stop_name": "Bourbon Street",
+        "next_stop": 6,
+        "stop_type": "S",
+        "a_time": "08:13"
+    },
+    {
+        "bus_id": 512,
+        "stop_id": 6,
+        "stop_name": "Sunset Boulevard",
+        "next_stop": 0,
+        "stop_type": "F",
+        "a_time": "08:16"
+    }
+]
+```
+
+Output 1:
+```text
+Arrival time test:
+bus_id line 128: wrong time on station Fifth Avenue
+bus_id line 256: wrong time on station Sunset Boulevard
+```
+
+Example 2
+
+Input 2:
+```json
+[
+    {
+        "bus_id": 512,
+        "stop_id": 4,
+        "stop_name": "Bourbon Street",
+        "next_stop": 6,
+        "stop_type": "S",
+        "a_time": "08:13"
+    },
+    {
+        "bus_id": 512,
+        "stop_id": 6,
+        "stop_name": "Sunset Boulevard",
+        "next_stop": 0,
+        "stop_type": "F",
+        "a_time": "08:16"
+    }
+]
+```
+
+Output 2:
+```text
+Arrival time test:
+OK
+```
