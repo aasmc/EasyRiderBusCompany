@@ -1,7 +1,6 @@
 import json
 import re
 
-
 BUS_ID = "bus_id"
 STOP_ID = "stop_id"
 STOP_NAME = "stop_name"
@@ -9,8 +8,13 @@ NEXT_STOP = "next_stop"
 STOP_TYPE = "stop_type"
 ARRIVAL_TIME = "a_time"
 
-
 FORMAT_REQUIRED_FIELDS = [STOP_NAME, STOP_TYPE, ARRIVAL_TIME]
+
+
+class NoStartEndStopException(Exception):
+    def __init__(self, bus_id):
+        self.message = f"There is no start or end stop for the line: {bus_id}."
+        super().__init__(self.message)
 
 
 def get_bus_stop_info():
@@ -29,7 +33,6 @@ errors_dict = {
     STOP_TYPE: 0,
     ARRIVAL_TIME: 0,
 }
-
 
 bus_id_to_num_stops = dict()
 
@@ -148,6 +151,71 @@ def collect_and_print_statistics():
         print(f"bus_id: {key}, stops: {value}")
 
 
+bus_id_to_start_stop = dict()
+bus_id_to_final_stop = dict()
+bus_id_to_all_stops = dict()
+start_stops = set()
+final_stops = set()
+
+
+def check_bus_start_final_stops(bus_dict):
+    bus_id = bus_dict[BUS_ID]
+    stop_type = bus_dict[STOP_TYPE]
+    if bus_id_to_all_stops.get(bus_id) is not None:
+        bus_id_to_all_stops[bus_id].append(bus_dict[STOP_NAME])
+    else:
+        bus_id_to_all_stops[bus_id] = []
+        bus_id_to_all_stops[bus_id].append(bus_dict[STOP_NAME])
+    if stop_type == "S":
+        if bus_id_to_start_stop.get(bus_id) is not None:
+            raise NoStartEndStopException(bus_id)
+        else:
+            bus_id_to_start_stop[bus_id] = bus_dict[STOP_NAME]
+            start_stops.add(bus_dict[STOP_NAME])
+    elif stop_type == "F":
+        if bus_id_to_final_stop.get(bus_id) is not None:
+            raise NoStartEndStopException(bus_id)
+        else:
+            bus_id_to_final_stop[bus_id] = bus_dict[STOP_NAME]
+            final_stops.add(bus_dict[STOP_NAME])
+
+
+def find_transfer_stops():
+    result = set()
+    for bus_id, stop_names in bus_id_to_all_stops.items():
+        for name in stop_names:
+            for other_bus_id, other_stop_names in bus_id_to_all_stops.items():
+                if bus_id != other_bus_id:
+                    if name in other_stop_names:
+                        result.add(name)
+    return result
+
+
+def print_start_final_transfer_stops():
+    start = sorted(start_stops)
+    final = sorted(final_stops)
+    transfer = sorted(find_transfer_stops())
+    print(f"Start stops: {len(start_stops)} {list(start)}")
+    print(f"Transfer stops: {len(transfer)} {list(transfer)}")
+    print(f"Finish stops: {len(final_stops)} {list(final)}")
+
+
+def check_all_buses_start_final_stops():
+    bus_lines = get_bus_stop_info()
+    try:
+        for bus_dict in bus_lines:
+            check_bus_start_final_stops(bus_dict)
+
+        for bus_dict in bus_lines:
+            bus_id = bus_dict[BUS_ID]
+            if bus_id_to_start_stop.get(bus_id) is None or bus_id_to_final_stop.get(bus_id) is None:
+                raise NoStartEndStopException(bus_id)
+
+        print_start_final_transfer_stops()
+    except NoStartEndStopException as e:
+        print(e)
+
+
 if __name__ == '__main__':
-    collect_and_print_statistics()
+    check_all_buses_start_final_stops()
 
