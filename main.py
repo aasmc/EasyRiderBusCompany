@@ -31,6 +31,9 @@ errors_dict = {
 }
 
 
+bus_id_to_num_stops = dict()
+
+
 def check_info_ignore_format(bus_info_dict, pos_to_check, type_to_check, required):
     info = bus_info_dict.get(pos_to_check)
     if type_to_check == int and info == 0:
@@ -132,6 +135,19 @@ def check_errors():
         print(f"{key}: {val}")
 
 
+def collect_and_print_statistics():
+    bus_list = get_bus_stop_info()
+    for bus_dict in bus_list:
+        bus_id = bus_dict[BUS_ID]
+        if bus_id_to_num_stops.get(bus_id):
+            bus_id_to_num_stops[bus_id] += 1
+        else:
+            bus_id_to_num_stops[bus_id] = 1
+    print("Line names and number of stops:")
+    for key, value in bus_id_to_num_stops.items():
+        print(f"bus_id: {key}, stops: {value}")
+
+
 if __name__ == '__main__':
-    check_format_errors()
+    collect_and_print_statistics()
 
