@@ -200,6 +200,54 @@ def print_start_final_transfer_stops():
     print(f"Finish stops: {len(final_stops)} {list(final)}")
 
 
+bus_id_to_stop_name_arrival_time = dict()
+
+
+def collect_arrival_times():
+    bus_lines = get_bus_stop_info()
+    for bus_dict in bus_lines:
+        bus_id = bus_dict[BUS_ID]
+        stop_name = bus_dict[STOP_NAME]
+        arrival_time = bus_dict[ARRIVAL_TIME]
+        pattern = re.compile(":")
+        arrival_time_int = int(pattern.sub("", arrival_time))
+        if bus_id_to_stop_name_arrival_time.get(bus_id) is None:
+            bus_id_to_stop_name_arrival_time[bus_id] = []
+        bus_id_to_stop_name_arrival_time[bus_id].append((stop_name, arrival_time_int))
+
+
+bus_id_to_incorrect_stop = dict()
+
+
+def process_arrival_times():
+    for bus_id, arrivals in bus_id_to_stop_name_arrival_time.items():
+        if arrivals:
+            current_arrival_time = arrivals[0][1]
+            for i in range(1, len(arrivals)):
+                next_arrival_time = arrivals[i][1]
+                next_stop_name = arrivals[i][0]
+                if next_arrival_time <= current_arrival_time:
+                    bus_id_to_incorrect_stop[bus_id] = next_stop_name
+                    break
+                else:
+                    current_arrival_time = next_arrival_time
+
+
+def print_incorrect_arrival_times():
+    print("Arrival time test:")
+    if len(bus_id_to_incorrect_stop) == 0:
+        print("OK")
+    else:
+        for bus_id, stop_name in bus_id_to_incorrect_stop.items():
+            print(f"bus_id line {bus_id}: wrong time on station {stop_name}")
+
+
+def check_arrival_times():
+    collect_arrival_times()
+    process_arrival_times()
+    print_incorrect_arrival_times()
+
+
 def check_all_buses_start_final_stops():
     bus_lines = get_bus_stop_info()
     try:
@@ -217,5 +265,5 @@ def check_all_buses_start_final_stops():
 
 
 if __name__ == '__main__':
-    check_all_buses_start_final_stops()
+    check_arrival_times()
 
