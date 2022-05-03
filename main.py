@@ -154,6 +154,7 @@ def collect_and_print_statistics():
 bus_id_to_start_stop = dict()
 bus_id_to_final_stop = dict()
 bus_id_to_all_stops = dict()
+bus_id_to_ondemand_stops = dict()
 start_stops = set()
 final_stops = set()
 
@@ -178,6 +179,10 @@ def check_bus_start_final_stops(bus_dict):
         else:
             bus_id_to_final_stop[bus_id] = bus_dict[STOP_NAME]
             final_stops.add(bus_dict[STOP_NAME])
+    elif stop_type == "O":
+        if bus_id_to_ondemand_stops.get(bus_id) is None:
+            bus_id_to_ondemand_stops[bus_id] = []
+        bus_id_to_ondemand_stops[bus_id].append(bus_dict[STOP_NAME])
 
 
 def find_transfer_stops():
@@ -248,6 +253,28 @@ def check_arrival_times():
     print_incorrect_arrival_times()
 
 
+def check_on_demand_stops():
+    bus_lines = get_bus_stop_info()
+    for bus_dict in bus_lines:
+        check_bus_start_final_stops(bus_dict)
+    transfer_stops = find_transfer_stops()
+    error_set = set()
+    for bus_id, stops in bus_id_to_ondemand_stops.items():
+        for stop in stops:
+            if stop in start_stops:
+                error_set.add(stop)
+            elif stop in final_stops:
+                error_set.add(stop)
+            elif stop in transfer_stops:
+                error_set.add(stop)
+    errors = sorted(error_set)
+    print("On demand stops test:")
+    if len(errors) == 0:
+        print("OK")
+    else:
+        print(f"Wrong stop type: {list(errors)}")
+
+
 def check_all_buses_start_final_stops():
     bus_lines = get_bus_stop_info()
     try:
@@ -265,5 +292,5 @@ def check_all_buses_start_final_stops():
 
 
 if __name__ == '__main__':
-    check_arrival_times()
+    check_on_demand_stops()
 
